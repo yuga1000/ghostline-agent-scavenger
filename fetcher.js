@@ -3,9 +3,7 @@ const { saveTextToFile } = require('./utils');
 
 // Список источников — сюда добавляй реальные дампы
 const SOURCES = [
-  'https://pastebin.com/raw/FTJNbpuA',
-  'https://rentry.org/raw/random',
-  'https://controlc.com/abcdef/raw' // Пример, нужно реальный ID
+  'https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore',
 ];
 
 async function fetchAndStoreDumps() {
