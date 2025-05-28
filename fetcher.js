@@ -1,9 +1,10 @@
 const axios = require('axios');
 const { saveTextToFile } = require('./utils');
 
-// Пример источника (можно заменить на другой pastebin-клон)
+// Список источников — сюда добавляй реальные дампы
 const SOURCES = [
-  'https://pastebin.com/raw/someExampleDump', // ← поменяй на реальные URL
+  'https://pastebin.com/raw/your_real_dump_1',
+  'https://pastebin.com/raw/your_real_dump_2'
 ];
 
 async function fetchAndStoreDumps() {
@@ -11,11 +12,13 @@ async function fetchAndStoreDumps() {
     try {
       const response = await axios.get(url);
       const content = response.data;
-      const fileName = `dump-${Date.now()}.txt`;
-      saveTextToFile(fileName, content);
-      console.log(`✅ Saved dump from ${url} as ${fileName}`);
-    } catch (err) {
-      console.warn(`⚠️ Failed to fetch ${url}: ${err.message}`);
+
+      const filename = url.split('/').pop() + '.txt'; // имя файла на основе URL
+      await saveTextToFile(filename, content);
+
+      console.log(`✅ Загружено и сохранено: ${filename}`);
+    } catch (error) {
+      console.error(`❌ Ошибка при загрузке ${url}:`, error.message);
     }
   }
 }
