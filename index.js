@@ -76,7 +76,6 @@ async function mainLoop() {
 }
 
 mainLoop();
-main();
 
 const { fetchPasteLinks } = require('./scraper');
 
