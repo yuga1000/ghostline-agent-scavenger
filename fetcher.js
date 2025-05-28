@@ -1,34 +1,23 @@
- const axios = require('axios');
-const { parseDumpAndScan } = require('./parser');
+const axios = require('axios');
 const { saveTextToFile } = require('./utils');
 
-// URL публичной ленты Pastebin (через сторонний сервис, Pastebin API платный)
-const FEED_URL = 'https://scrape.pastebin.com/api_scraping.php?limit=10';
+// Пример источника (можно заменить на другой pastebin-клон)
+const SOURCES = [
+  'https://pastebin.com/raw/someExampleDump', // ← поменяй на реальные URL
+];
 
-async function fetchAndProcessDumps() {
-  try {
-    const { data } = await axios.get(FEED_URL);
-    if (!Array.isArray(data)) return;
-
-    for (const paste of data) {
-      const url = paste.scrape_url;
-      try {
-        const response = await axios.get(url);
-        const text = response.data;
-
-        // сохраняем локально (для логов или повторного анализа)
-        await saveTextToFile(`dump-${Date.now()}.txt`, text);
-
-        // запускаем парсер
-        parseDumpAndScan(text);
-      } catch (err) {
-        console.error('Ошибка загрузки паста:', err.message);
-      }
+async function fetchAndStoreDumps() {
+  for (const url of SOURCES) {
+    try {
+      const response = await axios.get(url);
+      const content = response.data;
+      const fileName = `dump-${Date.now()}.txt`;
+      saveTextToFile(fileName, content);
+      console.log(`✅ Saved dump from ${url} as ${fileName}`);
+    } catch (err) {
+      console.warn(`⚠️ Failed to fetch ${url}: ${err.message}`);
     }
-  } catch (err) {
-    console.error('Ошибка получения фида Pastebin:', err.message);
   }
 }
 
-// экспортируем как функцию для вызова из index.js
-module.exports = { fetchAndProcessDumps };
+module.exports = { fetchAndStoreDumps };
