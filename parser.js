@@ -1,11 +1,25 @@
-export function parseDumpFile(text) {
-  const lines = text.split('\n');
-  const keys = [];
+const { ethers } = require('ethers');
 
-  for (const line of lines) {
-    const match = line.match(/\b[a-f0-9]{64}\b/i);
-    if (match) keys.push(match[0]);
-  }
-
-  return keys;
+function isValidAddress(addr) {
+  return ethers.isAddress(addr);
 }
+
+function parseLine(line) {
+  try {
+    const [maybeAddr, maybePriv] = line.split(/\s+/);
+    if (!maybeAddr || !maybePriv) return null;
+
+    const address = maybeAddr.trim();
+    const privKey = maybePriv.trim();
+
+    if (isValidAddress(address) && privKey.startsWith('0x') && privKey.length >= 64) {
+      return `🔍 Найдена пара:\nАдрес: ${address}\nКлюч: ${privKey}`;
+    }
+
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+module.exports = { parseLine };
