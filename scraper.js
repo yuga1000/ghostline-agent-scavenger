@@ -1,7 +1,10 @@
+const fs = require('fs');
+const path = require('path');
+
 function fetchPasteLinks() {
-  return [
-    'https://ghostbin.com/paste/ypdch/raw' // Тестовый дамп с валидным текстом
-  ];
+  // Сохраняем sample_dump.txt как локальную ссылку
+  const fullPath = path.join(__dirname, 'sample_dump.txt');
+  return [fullPath];
 }
 
 module.exports = { fetchPasteLinks };
