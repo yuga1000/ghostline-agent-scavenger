@@ -24,3 +24,25 @@ async function fetchAndStoreDumps() {
 }
 
 module.exports = { fetchAndStoreDumps };
+const { fetchPasteContent } = require('./fetchPastebin');
+const { extractKeys } = require('./parser');
+const { sendToTelegram } = require('./telegram');
+
+async function processLinks(links) {
+  for (const url of links) {
+    try {
+      const content = await fetchPasteContent(url);
+      const found = extractKeys(content);
+      if (found.length > 0) {
+        await sendToTelegram(found.join('\n'), `🔐 Новый дамп: ${url}`);
+      }
+    } catch (err) {
+      console.error(`Ошибка при обработке ${url}:`, err.message);
+    }
+  }
+}
+
+module.exports = {
+  fetchAndStoreDumps,
+  processLinks
+};
