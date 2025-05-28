@@ -3,8 +3,9 @@ const { saveTextToFile } = require('./utils');
 
 // Список источников — сюда добавляй реальные дампы
 const SOURCES = [
-  'https://pastebin.com/raw/your_real_dump_1',
-  'https://pastebin.com/raw/your_real_dump_2'
+  'https://pastebin.com/raw/FTJNbpuA',
+  'https://rentry.org/raw/random',
+  'https://controlc.com/abcdef/raw' // Пример, нужно реальный ID
 ];
 
 async function fetchAndStoreDumps() {
