@@ -82,6 +82,7 @@ const { fetchPasteLinks } = require('./scraper');
 setInterval(async () => {
   console.log('🔁 Запуск цикла поиска паст:');
   const foundLinks = await fetchPasteLinks();
+  await processLinks(foundLinks);
   console.log('🧩 Найдено ссылок:', foundLinks.length);
 
   // Здесь можно прокинуть foundLinks дальше (в fetcher или другую очередь)
