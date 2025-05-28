@@ -1,22 +1,27 @@
 const axios = require('axios');
 
-const BOT_TOKEN = process.env.BOT_TOKEN;
-const CHAT_ID = process.env.CHAT_ID;
+const token = process.env.TELEGRAM_TOKEN;
+const chatId = process.env.TELEGRAM_CHAT_ID;
 
-async function sendToTelegram(text) {
-  if (!BOT_TOKEN || !CHAT_ID) {
-    console.error('Telegram credentials missing');
+async function sendTelegramMessage(message) {
+  if (!token || !chatId) {
+    console.error('❌ TELEGRAM_TOKEN или TELEGRAM_CHAT_ID не заданы.');
     return;
   }
 
+  const url = `https://api.telegram.org/bot${token}/sendMessage`;
+  const payload = {
+    chat_id: chatId,
+    text: message,
+    parse_mode: 'HTML',
+  };
+
   try {
-    await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      chat_id: CHAT_ID,
-      text,
-    });
-  } catch (e) {
-    console.error('Ошибка отправки в Telegram:', e.message);
+    await axios.post(url, payload);
+    console.log('✅ Отправлено в Telegram');
+  } catch (error) {
+    console.error('❌ Ошибка при отправке в Telegram:', error.message);
   }
 }
 
-module.exports = { sendToTelegram };
+module.exports = { sendTelegramMessage };
