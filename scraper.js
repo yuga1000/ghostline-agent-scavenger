@@ -1,11 +1,7 @@
-// scraper.js
-
-async function fetchPasteLinks() {
+function fetchPasteLinks() {
   return [
-  'https://pastebin.com/raw/1A2b3C4D'
-];
+    'https://rentry.org/ghostdump1/raw'  // заменяй на свою ссылку
+  ];
 }
 
-module.exports = {
-  fetchPasteLinks
-};
+module.exports = { fetchPasteLinks };
