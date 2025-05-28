@@ -1,35 +1,18 @@
-import dotenv from 'dotenv';
-dotenv.config();
+const fs = require('fs');
+const path = require('path');
+const parser = require('./parser');
+const { sendToTelegram } = require('./telegram');
 
-import { parseDumpFile } from './parser.js';
-import { sendToTelegram } from './telegram.js';
-import { checkKey } from './utils.js';
-import fs from 'fs';
+const dumpPath = path.join(__dirname, 'sample_dump.txt');
 
-const DUMP_FOLDER = './dumps';
-const processed = new Set();
-
-async function processDumpFile(filePath) {
-  const content = fs.readFileSync(filePath, 'utf-8');
-  const keys = parseDumpFile(content);
-  
-  for (const key of keys) {
-    if (processed.has(key)) continue;
-    processed.add(key);
-
-    const result = await checkKey(key);
-    if (result && result.balance >= process.env.MIN_BALANCE) {
-      await sendToTelegram(result);
+function scanDump() {
+  const lines = fs.readFileSync(dumpPath, 'utf-8').split('\n').filter(Boolean);
+  for (const line of lines) {
+    const result = parser.parseLine(line.trim());
+    if (result) {
+      sendToTelegram(result);
     }
   }
 }
 
-async function start() {
-  const files = fs.readdirSync(DUMP_FOLDER);
-  for (const file of files) {
-    const path = `${DUMP_FOLDER}/${file}`;
-    await processDumpFile(path);
-  }
-}
-
-start();
+scanDump();
