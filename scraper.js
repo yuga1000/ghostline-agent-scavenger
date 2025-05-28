@@ -1,6 +1,6 @@
 function fetchPasteLinks() {
   return [
-    'https://rentry.org/ghostdump1/raw'  // заменяй на свою ссылку
+    'https://ghostbin.com/paste/ypdch/raw' // Тестовый дамп с валидным текстом
   ];
 }
 
